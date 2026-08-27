@@ -1,56 +1,197 @@
-# Welcome to your Expo app 👋
+# My Book Repository — Frontend
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicación móvil desarrollada con React Native y Expo para gestionar una biblioteca personal, registrar libros y controlar el progreso de lectura.
 
-## Get started
+Este repositorio contiene el frontend de la aplicación. Los datos, usuarios y libros se gestionan mediante una API REST desarrollada con Spring Boot.
 
-1. Install dependencies
+## Estado del proyecto
 
-   ```bash
-   npm install
-   ```
+El frontend se encuentra actualmente en desarrollo.
 
-2. Start the app
+Actualmente incluye:
 
-   ```bash
-   npx expo start
-   ```
+* Pantalla de bienvenida.
+* Diseño visual inicial.
+* Recursos gráficos personalizados.
+* Configuración de Expo Router.
+* Tipografías personalizadas mediante Expo Google Fonts.
 
-In the output, you'll find options to open the app in a
+Funcionalidades previstas:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+* Registro de usuarios.
+* Inicio de sesión mediante JWT.
+* Consulta de libros del usuario.
+* Creación de libros.
+* Modificación del progreso de lectura.
+* Eliminación de libros.
+* Modificación del perfil del usuario.
+* Cierre de sesión.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Tecnologías utilizadas
 
-## Get a fresh project
+* React Native
+* Expo
+* TypeScript
+* Expo Router
+* Expo Image
+* Expo Google Fonts
+* Spring Boot REST API
+* JWT para autenticación
 
-When you're ready, run:
+## Repositorios
+
+* Frontend: [MyBookRepository-FrontEnd](https://github.com/SrCastilloo/MyBookRepository-FrontEnd-)
+* Backend: [MyBookRepository-Backend](https://github.com/SrCastilloo/MyBookRepository-Backend-)
+
+## Requisitos previos
+
+Antes de ejecutar el proyecto necesitas tener instalado:
+
+* Node.js
+* npm
+* Expo Go en el dispositivo móvil, o un emulador de Android/iOS
+* Git
+
+También es necesario tener el backend de Spring Boot ejecutándose.
+
+## Instalación
+
+Clona el repositorio:
 
 ```bash
-npm run reset-project
+git clone https://github.com/SrCastilloo/MyBookRepository-FrontEnd-.git
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Accede al proyecto:
 
-### Other setup steps
+```bash
+cd MyBookRepository-FrontEnd-
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Instala las dependencias:
 
-## Learn more
+```bash
+npm install
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+Inicia la aplicación:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npx expo start
+```
 
-## Join the community
+Desde la terminal de Expo podrás abrir la aplicación en:
 
-Join our community of developers creating universal apps.
+* Expo Go.
+* Emulador de Android.
+* Simulador de iOS.
+* Navegador web.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Configuración de la API
+
+Crea un archivo `.env` en la raíz del proyecto:
+
+```env
+EXPO_PUBLIC_API_URL=http://DIRECCION_IP:8080/api/v1
+```
+
+Ejemplo para un dispositivo físico conectado a la misma red Wi-Fi:
+
+```env
+EXPO_PUBLIC_API_URL=http://192.168.1.100:8080/api/v1
+```
+
+La dirección depende del dispositivo utilizado:
+
+| Entorno            | Dirección del backend                       |
+| ------------------ | ------------------------------------------- |
+| Navegador web      | `http://localhost:8080/api/v1`              |
+| Emulador Android   | `http://10.0.2.2:8080/api/v1`               |
+| Dispositivo físico | `http://IP_LOCAL_DEL_ORDENADOR:8080/api/v1` |
+
+En un teléfono físico no se debe utilizar `localhost`, porque haría referencia al propio teléfono y no al ordenador donde se ejecuta Spring Boot.
+
+Después de modificar `.env`, reinicia Expo:
+
+```bash
+npx expo start -c
+```
+
+## Estructura principal
+
+```text
+MyBookRepository-FrontEnd-
+├── assets
+│   └── images
+│       └── bookimage.png
+├── src
+│   └── app
+│       ├── _layout.tsx
+│       └── index.tsx
+├── .gitignore
+├── app.json
+├── package.json
+├── tsconfig.json
+└── README.md
+```
+
+A medida que crezca el proyecto se podrán añadir:
+
+```text
+src
+├── app
+├── components
+├── context
+├── hooks
+├── services
+├── types
+└── utils
+```
+
+## Autenticación
+
+El inicio de sesión se realizará contra la API de Spring Boot. Cuando las credenciales sean correctas, el backend devolverá un token JWT.
+
+Las peticiones protegidas enviarán el token mediante la cabecera:
+
+```http
+Authorization: Bearer ACCESS_TOKEN
+```
+
+El identificador del usuario no se enviará manualmente. El backend lo obtendrá del contenido del JWT.
+
+## Comandos útiles
+
+Iniciar Expo:
+
+```bash
+npx expo start
+```
+
+Iniciar limpiando la caché:
+
+```bash
+npx expo start -c
+```
+
+Abrir en Android:
+
+```bash
+npm run android
+```
+
+Abrir en web:
+
+```bash
+npm run web
+```
+
+Ejecutar ESLint:
+
+```bash
+npx expo lint
+```
+
+## Autor
+
+Desarrollado por [Daniel Castillo](https://github.com/SrCastilloo).
