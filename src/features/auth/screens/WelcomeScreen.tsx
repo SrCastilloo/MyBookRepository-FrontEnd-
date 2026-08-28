@@ -4,7 +4,8 @@ import {
 } from "@expo-google-fonts/fraunces";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text } from "react-native";
+import DecorativeDivider from "../../../components/ui/DecorativeDivider";
 export default function WelcomeScreen() {
   const [fontsLoaded] = useFonts({
     FrauncesExtraBold: Fraunces_800ExtraBold,
@@ -24,11 +25,7 @@ export default function WelcomeScreen() {
       />
       <Text style={styles.title}>My Book{"\n"}Repository</Text>
 
-      <View style={styles.divider}>
-        <View style={styles.dividerLine} />
-        <Text style={styles.dividerStar}>✦</Text>
-        <View style={styles.dividerLine} />
-      </View>
+      <DecorativeDivider style={{ marginTop: 18 }} />
       <Text style={styles.subtitle1}> Tu biblioteca, siempre contigo </Text>
       <Text style={styles.subtitle2}> Organiza tus lecturas y sigue tu progreso</Text>
 

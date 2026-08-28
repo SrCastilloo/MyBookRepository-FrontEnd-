@@ -1,14 +1,69 @@
+import AppButton from "@/components/ui/AppButton";
+import AppInput from "@/components/ui/AppInput";
+import DecorativeDivider from "@/components/ui/DecorativeDivider";
+import Subtitle1 from "@/components/ui/Subtitle1";
 import {
     Fraunces_800ExtraBold,
     useFonts,
 } from "@expo-google-fonts/fraunces";
 import { Image } from "expo-image";
-import { ScrollView, StyleSheet, Text } from "react-native";
+import { useState } from "react";
+import { Alert, ScrollView, StyleSheet, Text } from "react-native";
+import { saveAccessToken } from "../../../services/storage/tokenStorage";
+import { login } from "../api/auth.api";
 
-export default function login() {
+export default function loginScreen() {
     const [fontsLoaded] = useFonts({
         FrauncesExtraBold: Fraunces_800ExtraBold,
     });
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [loginError, setLoginError] =
+        useState<string | null>(null);
+
+    const handleLogin = async () => {
+        setLoginError(null);
+
+        if (!email.trim() || !password) {
+            setLoginError(
+                "Introduce el correo y la contraseña",
+            );
+
+            return;
+        }
+
+        try {
+            setIsLoading(true);
+
+            const loginResponse = await login({
+                email: email.trim().toLowerCase(),
+                password,
+            });
+
+            await saveAccessToken(
+                loginResponse.accessToken,
+            );
+
+            Alert.alert(
+                "Sesión iniciada",
+                `Bienvenida, ${loginResponse.user.name}`,
+            );
+
+            // Cuando tengas creada la ruta protegida:
+            // router.replace("/library");
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : "Se ha producido un error inesperado";
+
+            setLoginError(message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     if (!fontsLoaded)
         return null;
@@ -25,6 +80,38 @@ export default function login() {
 
             <Text style={styles.title}>¡Bienvenido{"\n"}de nuevo!</Text>
 
+            <DecorativeDivider style={{ marginTop: 18 }}></DecorativeDivider>
+
+            <Subtitle1 style={{ marginBottom: 18 }}> Inicia sesión para continuar con tus lecturas</Subtitle1>
+
+            <AppInput
+                label="Correo electrónico"
+                icon="mail-outline"
+                placeholder="tu@email.com"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+            />
+
+            <AppInput
+                label="Contraseña"
+                icon="lock-closed-outline"
+                placeholder="Introduce tu contraseña"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+            />
+            {loginError ? (
+                <Text style={styles.errorText}>
+                    {loginError}
+                </Text>
+            ) : null}
+
+
+            <AppButton onPress={handleLogin}
+                loading={isLoading}> Iniciar sesión</AppButton>
 
         </ScrollView>
     )
@@ -39,6 +126,14 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#FDF6EC",
     },
+    errorText: {
+        width: "85%",
+        maxWidth: 340,
+        color: "#C94C4C",
+        fontSize: 14,
+        textAlign: "center",
+        marginBottom: 14,
+    },
     container: {
         flexGrow: 1,
         backgroundColor: "#FDF6EC",
@@ -50,7 +145,7 @@ const styles = StyleSheet.create({
     booksImage: {
         width: "90%",
         height: 300,
-        marginBottom: 20,
+        marginBottom: 15,
     },
     title: {
         fontFamily: "FrauncesExtraBold",
