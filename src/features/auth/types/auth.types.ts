@@ -17,3 +17,17 @@ export type LoginResponse = {
   accessToken: string;
   user: UserResponse;
 };
+
+export type RegisterRequest = {
+  name: String;
+  lastName: String;
+  email: String;
+  password: String;
+};
+
+export type RegisterReponse = {
+  id: String;
+  name: String;
+  lastName: String;
+  email: String;
+};
