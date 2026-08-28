@@ -6,12 +6,13 @@ import {
     Fraunces_800ExtraBold,
     useFonts,
 } from "@expo-google-fonts/fraunces";
+import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, ScrollView, StyleSheet, Text } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { saveAccessToken } from "../../../services/storage/tokenStorage";
 import { login } from "../api/auth.api";
-
 export default function loginScreen() {
     const [fontsLoaded] = useFonts({
         FrauncesExtraBold: Fraunces_800ExtraBold,
@@ -45,14 +46,9 @@ export default function loginScreen() {
             await saveAccessToken(
                 loginResponse.accessToken,
             );
+            router.replace("/library");
 
-            Alert.alert(
-                "Sesión iniciada",
-                `Bienvenida, ${loginResponse.user.name}`,
-            );
 
-            // Cuando tengas creada la ruta protegida:
-            // router.replace("/library");
         } catch (error: unknown) {
             const message =
                 error instanceof Error
@@ -103,16 +99,23 @@ export default function loginScreen() {
                 onChangeText={setPassword}
                 secureTextEntry
             />
-            {loginError ? (
-                <Text style={styles.errorText}>
-                    {loginError}
-                </Text>
-            ) : null}
-
 
             <AppButton onPress={handleLogin}
                 loading={isLoading}> Iniciar sesión</AppButton>
 
+            {loginError ? (
+                <View style={styles.errorContainer}>
+                    <Ionicons
+                        name="alert-circle-outline"
+                        size={20}
+                        color="#B83A3A"
+                    />
+
+                    <Text style={styles.errorText}>
+                        {loginError}
+                    </Text>
+                </View>
+            ) : null}
         </ScrollView>
     )
 
@@ -126,13 +129,27 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#FDF6EC",
     },
-    errorText: {
+    errorContainer: {
         width: "85%",
         maxWidth: 340,
-        color: "#C94C4C",
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#FCE8E8",
+        borderWidth: 1,
+        borderColor: "#E8B3B3",
+        borderRadius: 12,
+        paddingHorizontal: 14,
+        paddingVertical: 11,
+        marginBottom: 16,
+        marginTop: 16,  
+        gap: 9,
+    },
+
+    errorText: {
+        flex: 1,
+        color: "#8F2929",
         fontSize: 14,
-        textAlign: "center",
-        marginBottom: 14,
+        lineHeight: 19,
     },
     container: {
         flexGrow: 1,

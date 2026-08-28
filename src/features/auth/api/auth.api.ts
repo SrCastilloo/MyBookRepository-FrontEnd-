@@ -7,8 +7,6 @@ export async function login(
 ): Promise<LoginResponse> {
   const url = `${API_URL}/users/login`;
 
-  console.log("URL login:", url);
-
   const response = await fetch(url, {
     method: "POST",
     headers: {
@@ -27,21 +25,24 @@ export async function login(
     responseBody = responseText;
   }
 
-  console.log("Estado login:", response.status);
-  console.log("Respuesta login:", responseBody);
+  if (response.status === 401)
+    throw new Error(
+      "Correo o contraseña incorrectos. Revísalo " + " e inténtalo de nuevo",
+    );
 
   if (!response.ok) {
-    const apiError = responseBody as {
-      message?: string;
-      error?: string;
-    } | null;
+    throw new Error(
+      " No hemos podido iniciar sesión. " + "Inténtalo de nuevo más tarde",
+    );
+  }
 
+  /*
     throw new Error(
       apiError?.message ??
         apiError?.error ??
         `Error al iniciar sesión (${response.status})`,
     );
-  }
+    */
 
   return responseBody as LoginResponse;
 }
