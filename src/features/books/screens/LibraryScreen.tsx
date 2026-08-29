@@ -1,9 +1,9 @@
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { getMyBooks } from "@/features/books/api/books.api";
+import BookCard from "@/features/books/components/BookCard";
 import BookSearchBar from "@/features/books/components/BookSearchBar";
 import ReadingProgressCard from "@/features/books/components/ReadingProgressCard";
 import type { BookResponse } from "@/features/books/types/book.types";
-
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -54,6 +54,7 @@ export default function LibraryScreen() {
       }
     }
 
+    //obtenemos los libros del usuario en segundo plano
     loadBooks();
   }, []);
 
@@ -182,56 +183,13 @@ export default function LibraryScreen() {
         </View>
       ) : (
         filteredBooks.map((book) => (
-          <View
+          <BookCard
             key={book.id}
-            style={styles.bookCard}
-          >
-            {book.photoUrl ? (
-              <Image
-                source={book.photoUrl}
-                style={styles.bookCover}
-                contentFit="cover"
-              />
-            ) : (
-              <View style={styles.coverPlaceholder}>
-                <Ionicons
-                  name="book-outline"
-                  size={28}
-                  color="#D6A43B"
-                />
-              </View>
-            )}
-
-            <View style={styles.bookInformation}>
-              <Text
-                style={styles.bookTitle}
-                numberOfLines={2}
-              >
-                {book.title}
-              </Text>
-
-              <Text
-                style={styles.bookAuthor}
-                numberOfLines={1}
-              >
-                {book.author}
-              </Text>
-
-              <Text style={styles.bookProgress}>
-                {book.pagesRead} de {book.pages} páginas
-              </Text>
-            </View>
-
-            <Ionicons
-              name="chevron-forward"
-              size={22}
-              color="#7A858A"
-            />
-          </View>
+            book={book}
+          />
         ))
       )}
 
-      {/* Aquí pondremos posteriormente la lista de libros */}
     </ScrollView>
   );
 }
