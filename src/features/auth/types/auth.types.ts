@@ -12,12 +12,6 @@ export type UserResponse = {
   email: string;
 };
 
-export type LoginResponse = {
-  //respuesta del back
-  accessToken: string;
-  user: UserResponse;
-};
-
 export type RegisterRequest = {
   name: String;
   lastName: String;
@@ -30,4 +24,17 @@ export type RegisterReponse = {
   name: String;
   lastName: String;
   email: String;
+};
+
+export type AuthUser = {
+  id: string;
+  name: string;
+  lastName: string;
+  email: string;
+  photoUrl?: string; //opcional porque puede que el backend no lo devuelva
+};
+
+export type LoginResponse = {
+  accessToken: string;
+  user: AuthUser;
 };

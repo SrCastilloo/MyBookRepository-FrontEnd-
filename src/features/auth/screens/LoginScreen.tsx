@@ -13,7 +13,9 @@ import { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { saveAccessToken } from "../../../services/storage/tokenStorage";
 import { login } from "../api/auth.api";
-export default function loginScreen() {
+import { useAuth } from "../context/AuthContext";
+
+export default function LoginScreen() {
     const [fontsLoaded] = useFonts({
         FrauncesExtraBold: Fraunces_800ExtraBold,
     });
@@ -24,8 +26,11 @@ export default function loginScreen() {
     const [loginError, setLoginError] =
         useState<string | null>(null);
 
+    const { setCurrentUser } = useAuth();
+
     const handleLogin = async () => {
         setLoginError(null);
+
 
         if (!email.trim() || !password) {
             setLoginError(
@@ -46,6 +51,9 @@ export default function loginScreen() {
             await saveAccessToken(
                 loginResponse.accessToken,
             );
+
+            setCurrentUser(loginResponse.user);
+
             router.replace("/library");
 
 
@@ -141,7 +149,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 14,
         paddingVertical: 11,
         marginBottom: 16,
-        marginTop: 16,  
+        marginTop: 16,
         gap: 9,
     },
 
