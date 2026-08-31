@@ -6,8 +6,16 @@ import ReadingProgressCard from "@/features/books/components/ReadingProgressCard
 import type { BookResponse } from "@/features/books/types/book.types";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import {
+  router,
+  useFocusEffect,
+} from "expo-router";
+
+
+import {
+  useCallback,
+  useState,
+} from "react";
 
 import {
   ActivityIndicator,
@@ -33,16 +41,26 @@ export default function LibraryScreen() {
     useState<string | null>(null);
 
 
-  useEffect(() => {
+  useFocusEffect(
+  useCallback(() => {
+    let isActive = true;
+
     async function loadBooks() {
       try {
         setIsLoading(true);
         setBooksError(null);
 
-        const booksResponse = await getMyBooks();
+        const booksResponse =
+          await getMyBooks();
 
-        setBooks(booksResponse);
+        if (isActive) {
+          setBooks(booksResponse);
+        }
       } catch (error: unknown) {
+        if (!isActive) {
+          return;
+        }
+
         const message =
           error instanceof Error
             ? error.message
@@ -50,13 +68,19 @@ export default function LibraryScreen() {
 
         setBooksError(message);
       } finally {
-        setIsLoading(false);
+        if (isActive) {
+          setIsLoading(false);
+        }
       }
     }
 
-    //obtenemos los libros del usuario en segundo plano
-    loadBooks();
-  }, []);
+    void loadBooks();
+
+    return () => {
+      isActive = false;
+    };
+  }, []),
+);
 
   const normalizedSearch =
     search.trim().toLowerCase();
@@ -182,13 +206,21 @@ export default function LibraryScreen() {
           </Text>
         </View>
       ) : (
-        filteredBooks.map((book) => (
-          <BookCard
-            key={book.id}
-            book={book}
-          />
-        ))
-      )}
+filteredBooks.map((book) => (
+  <BookCard
+    key={book.id}
+    book={book}
+    onPress={() =>
+      router.push({
+        pathname:
+          "/(protected)/books/[bookId]",
+        params: {
+          bookId: book.id,
+        },
+      })
+    }
+  />
+))      )}
 
     </ScrollView>
   );

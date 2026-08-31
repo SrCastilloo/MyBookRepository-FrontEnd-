@@ -59,12 +59,10 @@ export default function TabsLayout() {
           ),
         }}
       />
-
       <Tabs.Screen
         name="add-book"
         options={{
           title: "Añadir",
-
           tabBarIcon: ({ focused }) => (
             <View
               style={[

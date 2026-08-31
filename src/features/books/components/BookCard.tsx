@@ -2,12 +2,16 @@ import type { BookResponse } from "../types/book.types";
 
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import {
+  useEffect,
+  useState,
+} from "react";
 
 import {
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 type BookCardProps = {
@@ -30,7 +34,8 @@ function getStateConfiguration(
     case "READ":
       return {
         label: "Leído",
-        icon: "checkmark-circle-outline" as const,
+        icon:
+          "checkmark-circle-outline" as const,
         color: "#3E6E42",
         backgroundColor: "#DCEACC",
       };
@@ -50,23 +55,37 @@ export default function BookCard({
   book,
   onPress,
 }: BookCardProps) {
+  const [hasImageError, setHasImageError] =
+    useState(false);
+
+  useEffect(() => {
+    setHasImageError(false);
+  }, [book.photoUrl]);
+
   const stateConfiguration =
     getStateConfiguration(book.state);
 
   const progress =
     book.pages > 0
       ? Math.min(
-          Math.max(book.pagesRead / book.pages, 0),
+          Math.max(
+            book.pagesRead / book.pages,
+            0,
+          ),
           1,
         )
       : 0;
 
   const progressWidth =
-    `${Math.round(progress * 100)}%` as `${number}%`;
+    `${Math.round(progress * 100)}%` as
+      `${number}%`;
 
   const showProgress =
     book.state === "READING" ||
     book.state === "READ";
+
+  const showCover =
+    Boolean(book.photoUrl) && !hasImageError;
 
   return (
     <Pressable
@@ -74,17 +93,33 @@ export default function BookCard({
       disabled={!onPress}
       style={({ pressed }) => [
         styles.card,
-        pressed && styles.cardPressed,
+        pressed &&
+          onPress &&
+          styles.cardPressed,
       ]}
-      accessibilityRole="button"
-      accessibilityLabel={`Abrir ${book.title}`}
+      accessibilityRole={
+        onPress ? "button" : undefined
+      }
+      accessibilityLabel={
+        onPress
+          ? `Abrir ${book.title}`
+          : undefined
+      }
+      accessibilityHint={
+        onPress
+          ? "Muestra los detalles del libro"
+          : undefined
+      }
     >
-      {book.photoUrl ? (
+      {showCover ? (
         <Image
-          source={book.photoUrl}
+          source={{
+            uri: book.photoUrl,
+          }}
           style={styles.cover}
           contentFit="cover"
           transition={200}
+          onError={() => setHasImageError(true)}
         />
       ) : (
         <View style={styles.coverPlaceholder}>
@@ -130,7 +165,8 @@ export default function BookCard({
             style={[
               styles.stateText,
               {
-                color: stateConfiguration.color,
+                color:
+                  stateConfiguration.color,
               },
             ]}
           >
@@ -141,7 +177,8 @@ export default function BookCard({
         {showProgress ? (
           <View style={styles.progressSection}>
             <Text style={styles.progressText}>
-              {book.pagesRead} de {book.pages} páginas
+              {book.pagesRead} de {book.pages}{" "}
+              páginas
             </Text>
 
             <View style={styles.progressTrack}>
@@ -160,11 +197,13 @@ export default function BookCard({
         ) : null}
       </View>
 
-      <Ionicons
-        name="chevron-forward"
-        size={22}
-        color="#7A858A"
-      />
+      {onPress ? (
+        <Ionicons
+          name="chevron-forward"
+          size={22}
+          color="#7A858A"
+        />
+      ) : null}
     </Pressable>
   );
 }
@@ -194,7 +233,7 @@ const styles = StyleSheet.create({
   },
 
   cardPressed: {
-    opacity: 0.85,
+    opacity: 0.82,
     transform: [{ scale: 0.99 }],
   },
 
